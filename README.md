@@ -33,6 +33,19 @@ Ensure the following tools are installed on your system:
 - `dig` or `nslookup`
 - `whois`
 
+## 🖥️ Operating System Compatibility
+
+The FindUs script is designed to work on:
+
+- ✅ **Linux** (Debian, Ubuntu, Arch, Kali, etc.)
+- ✅ **macOS** (with Homebrew-installed dependencies)
+- ⚠️ **Windows** (only via WSL - Windows Subsystem for Linux)
+
+> ❗ Native Windows environments (e.g., Command Prompt or PowerShell) are not supported due to dependency on Unix-based tools like `bash`, `jq`, and `nmap`.
+
+Make sure you're running this script in a Bash-compatible shell on a supported OS.
+
+
 You can install missing tools via your package manager:
 ```bash
 # Example for Debian/Ubuntu:
@@ -52,6 +65,11 @@ will be saved in your current working directory.
 
 👨‍💻 Author
 Made with ❤️ by st00boy
+
+⚠️ Disclaimer
+This tool is intended solely for educational and ethical research purposes.
+You must only use FindUs on systems and networks you own or have explicit permission to test.
+Unauthorized scanning or probing of third-party systems without consent is illegal and unethical.
 
 📜 License
 This project is open-source and free to use under the MIT License.
