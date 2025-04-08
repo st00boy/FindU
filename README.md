@@ -1,75 +1,86 @@
-# 🛰️ FindUs - All-in-One Network Recon Tool
+# 🔍 FindU: Domain Recon Tool
 
-**FindUs** is a sleek, terminal-based Bash tool designed for quick and efficient reconnaissance of domains and IP addresses. It wraps essential utilities like `dig`, `whois`, `nmap`, `crt.sh`, and `ipinfo.io` in a retro-styled interface, with animations and a centered layout for that smooth hacker aesthetic 😎.
-
----
-
-## ✨ Features
-
-- 🔍 **DNS Lookup** (with fallback to `nslookup`)
-- 🌐 **WHOIS Lookup**
-- 🛰️ **GeoIP Information** via [ipinfo.io](https://ipinfo.io)
-- 🧠 **Subdomain Enumeration** using [crt.sh](https://crt.sh)
-- 🛠️ **Nmap Scan Options:**
-  - Quick scan
-  - Full port scan
-  - OS & version detection
-  - Service version detection
-  - Custom port scan (e.g., 22,80,443)
-  - All scans combined
-- 💾 **Save Scan Results** to a `.txt` file in the current working directory
-- 🎛️ Clean UI with **animated effects** and **centered prompts**
+**FindU** is a retro-styled, terminal-based reconnaissance tool designed for gathering essential information about a domain. It combines DNS, GeoIP, WHOIS, subdomain enumeration, and Nmap scanning into a single slick Bash script. With colorful animations and a user-friendly menu, it's perfect for beginners and pros alike.
 
 ---
 
-## 🧰 Requirements
+## 🚀 Features
 
-Ensure the following tools are installed on your system:
+- ✅ DNS Lookup & IP Resolution
+- 🌐 GeoIP Lookup via `ipinfo.io`
+- 🕵️ WHOIS Information
+- 📡 Subdomain Enumeration (using `crt.sh`)
+- 🔎 Multiple Nmap Scan Modes:
+  - Quick Scan
+  - Full Port Scan
+  - OS Detection
+  - Service Version Detection
+  - Custom Port Scanning
+  - Run All Scans at Once
+- 💾 Save all results to a timestamped `.txt` file
+- 🎨 Retro terminal aesthetics and smooth animations
+- 📜 Interactive main menu + Help section
 
-- `bash`
-- `curl`
-- `jq`
-- `nmap`
-- `dig` or `nslookup`
-- `whois`
+---
 
-## 🖥️ Operating System Compatibility
+## 📥 Installation
 
-The FindUs script is designed to work on:
+> **Requirements:**
+> Ensure the following tools are installed on your system:
+>
+> `dig`, `nslookup`, `curl`, `jq`, `nmap`, `whois`
 
-- ✅ **Linux** (Debian, Ubuntu, Arch, Kali, etc.)
-- ✅ **macOS** (with Homebrew-installed dependencies)
-- ⚠️ **Windows** (only via WSL - Windows Subsystem for Linux)
+Install them using:
 
-> ❗ Native Windows environments (e.g., Command Prompt or PowerShell) are not supported due to dependency on Unix-based tools like `bash`, `jq`, and `nmap`.
-
-Make sure you're running this script in a Bash-compatible shell on a supported OS.
-
-
-You can install missing tools via your package manager:
 ```bash
-# Example for Debian/Ubuntu:
-sudo apt update && sudo apt install curl jq nmap dnsutils whois
+# Debian/Ubuntu
+sudo apt install dnsutils curl jq nmap whois
 
-🚀 Usage
- git clone https://github.com/st00boy/findus
-cd findus
-chmod +x findus.sh
-./findus.sh
+# RedHat/CentOS
+sudo yum install bind-utils curl jq nmap whois
 
-💾 Saving Results
-After completing a scan, you'll be prompted to save the results. If you choose to save:
+# MacOS (using Homebrew)
+brew install bind curl jq nmap whois
 
-📁 A file like: findus_scan_exampledomain_com_20250408_123456.txt
-will be saved in your current working directory.
+🧪 Usage
+ 1. Clone or download the script:
+  git clone https://github.com/st00boy/findU.git
+  cd findU
+  chmod +x findU.sh
+  ./findU.sh
 
-👨‍💻 Author
-Made with ❤️ by st00boy
+ 2. Follow the menu to:
 
-⚠️ Disclaimer
-This tool is intended solely for educational and ethical research purposes.
-You must only use FindUs on systems and networks you own or have explicit permission to test.
-Unauthorized scanning or probing of third-party systems without consent is illegal and unethical.
+    Start scanning a domain
 
-📜 License
-This project is open-source and free to use under the MIT License.
+    View Help/About info
+
+    Exit gracefully
+
+📂 Output Example
+When the scan completes, you'll have the option to save the results:
+findU_scan_example_com_20250408_194512.txt
+
+This includes:
+     IP addresses
+     GeoIP details
+     WHOIS info
+     Subdomains
+     Nmap results (if selected)
+
+🧠 About the Author
+st00boy
+💻 GitHub: github.com/st00boy
+❤️ Crafted with curiosity and creativity for learners, hackers, and tinkerers.
+
+
+🛡️ Disclaimer
+This tool is intended for educational and authorized testing purposes only. You can always obtain permission before scanning any domain you don't own.
+
+
+⭐️ Support & Contributions
+If you like this tool, consider ⭐️ starring the repo or contributing! Pull requests, bug reports, or feature ideas are welcome.
+
+
+
+
