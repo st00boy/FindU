@@ -210,7 +210,7 @@ run_scan() {
     read -r save_choice
     if [[ "$save_choice" =~ ^[Yy]$ ]]; then
         safe_domain=$(echo "$domain" | tr -cd '[:alnum:]_')
-        filename="findus_scan_${safe_domain}_$(date +%Y%m%d_%H%M%S).txt"
+        filename="findU_scan_${safe_domain}_$(date +%Y%m%d_%H%M%S).txt"
         echo -e "$full_output" > "$filename"
         echo -e "\t\t${GREEN}Results saved to $filename${NC}"
     fi
