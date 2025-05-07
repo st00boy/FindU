@@ -7,7 +7,7 @@ CYAN='\033[0;36m'
 RED='\033[0;31m'
 NC='\033[0m'  # No Color (reset)
 
-# Check for required tools
+# Required Tools Check
 required_cmds=("dig" "curl" "jq" "nmap" "whois")
 for cmd in "${required_cmds[@]}"; do
     if ! command -v "$cmd" &>/dev/null; then
@@ -16,7 +16,7 @@ for cmd in "${required_cmds[@]}"; do
     fi
 done
 
-# Function to animate text char-by-char
+# Text Animations
 animate_text() {
     local text="$1"
     printf "\t\t"
@@ -27,7 +27,6 @@ animate_text() {
     printf "\n"
 }
 
-# Function to animate line-by-line
 animate_lines() {
     for line in "$@"; do
         echo -e "\t\t$line"
@@ -35,32 +34,38 @@ animate_lines() {
     done
 }
 
-# Banner
-show_banner() {
+# Center Output
+center_text() {
+    local text="$1"
+    local width
+    width=$(tput cols)
+    while IFS= read -r line; do
+        local padding=$(( (width - ${#line}) / 2 ))
+        printf "%*s%s\n" "$padding" "" "$line"
+    done <<< "$text"
+}
+
+# About/Info
+show_info() {
     clear
-    banner_box="
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                                                                              │
-│   ███████╗██╗███╗   ██╗██████╗ ██╗   ██╗                                     │
-│   ██╔════╝██║████╗  ██║██╔══██╗██║   ██║                                     │
-│   █████╗  ██║██╔██╗ ██║██║  ██║██║   ██║                                     │
-│   ██╔══╝  ██║██║╚██╗██║██║  ██║██║   ██║                                     │
-│   ██║     ██║██║ ╚████║██████╔╝╚██████╔╝                                     │
-│   ╚═╝     ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝                                      │
-│                                                                              │
-│     DNS, WHOIS, Subdomains, GeoIP, Nmap & More                               │
-│     Author: st00boy | https://github.com/st00boy                             │
-└──────────────────────────────────────────────────────────────────────────────┘"
-    echo -e "$CYAN"
-    echo "$banner_box" | sed 's/^/\t\t/'
-    echo -e "$NC"
+    echo -e "${CYAN}"
+    center_text "FindU - Domain Reconnaissance Toolkit"
+    center_text "Author: st00boy"
+    center_text "https://github.com/st00boy"
+    echo -e "${NC}\n"
+    center_text "A terminal-based reconnaissance tool that performs DNS, WHOIS,"
+    center_text "GeoIP lookups, Subdomain discovery, and Nmap scanning."
+    echo -e "\n${CYAN}Press Enter to return to the main menu...${NC}"
+    read -r
 }
 
 # Main Menu
 main_menu() {
     while true; do
-        show_banner
-        echo -e "\n\t\t${YELLOW}Select an option:${NC}"
+        clear
+        echo -e "\n${YELLOW}"
+        center_text "==== FindU Recon Tool ===="
+        echo -e "${NC}"
         animate_lines \
             "${GREEN}1. Start Domain Scan${NC}" \
             "${GREEN}2. About / Help${NC}" \
@@ -70,7 +75,7 @@ main_menu() {
 
         case $menu_choice in
             1) run_scan ;;
-            2) show_help ;;
+            2) show_info ;;
             3)
                 animate_text "👋 Goodbye!"
                 exit 0
@@ -80,28 +85,9 @@ main_menu() {
     done
 }
 
-# Help/About section
-show_help() {
-    clear
-    show_banner
-    echo -e "\n\t\t${YELLOW}About FindU${NC}"
-    echo -e "\t\tA powerful terminal tool to gather domain information using:"
-    animate_lines \
-        "- DNS & IP lookup (dig, nslookup)" \
-        "- WHOIS records" \
-        "- GeoIP using ipinfo.io" \
-        "- Subdomain enumeration via crt.sh" \
-        "- Nmap scans (Quick, Full, OS detection, Custom)" \
-        "- Result saving to a .txt file"
-    echo -e "\n\t\t${CYAN}Press Enter to return to the main menu...${NC}"
-    read
-}
-
-# The full scanning logic goes here (same as before)
+# Scanning Function
 run_scan() {
     clear
-    show_banner
-
     echo -e "\n\t\t${GREEN}Enter the domain name: ${NC}"
     echo -ne "\t\t"
     read -r domain
@@ -116,8 +102,8 @@ run_scan() {
         return
     fi
 
-    echo -e "\t\t${YELLOW}The IP addresses for $domain are:${NC}"
-    echo "$ip_addresses" | sed 's/^/\t\t/'
+    echo -e "\t\t${YELLOW}IP addresses for $domain:${NC}"
+    center_text "$ip_addresses"
     full_output="\n[+] IP addresses for $domain:\n$ip_addresses\n"
 
     if [ "$(echo "$ip_addresses" | wc -l)" -gt 1 ]; then
@@ -127,7 +113,7 @@ run_scan() {
                 echo -e "\t\t${GREEN}You selected $ip_to_scan${NC}"
                 break
             else
-                echo -e "\t\t${RED}Invalid selection, please choose a valid number.${NC}"
+                echo -e "\t\t${RED}Invalid selection, try again.${NC}"
             fi
         done
     else
@@ -135,85 +121,74 @@ run_scan() {
         echo -e "\t\t${GREEN}Only one IP address found: $ip_to_scan${NC}"
     fi
 
-    # GeoIP
-    echo -e "\n\t\t${CYAN}Running GeoIP lookup for $ip_to_scan...${NC}"
+    # GeoIP Lookup
+    echo -e "\n\t\t${CYAN}GeoIP Lookup for $ip_to_scan...${NC}"
     geo_info=$(curl -s ipinfo.io/"$ip_to_scan")
     geo_output=$(echo "$geo_info" | jq -r '"IP: \(.ip)\nCity: \(.city)\nRegion: \(.region)\nCountry: \(.country)\nOrg: \(.org)"')
-    echo "$geo_output" | sed 's/^/\t\t/'
+    center_text "$geo_output"
     full_output+="\n[+] GeoIP Info:\n$geo_output\n"
 
-    # WHOIS
-    echo -e "\n\t\t${CYAN}Running WHOIS lookup for $domain...${NC}"
+    # WHOIS Lookup
+    echo -e "\n\t\t${CYAN}WHOIS Lookup for $domain...${NC}"
     whois_output=$(whois "$domain" | head -n 20)
-    echo "$whois_output" | sed 's/^/\t\t/'
+    center_text "$whois_output"
     full_output+="\n[+] WHOIS Info:\n$whois_output\n"
 
-    # Subdomains
-    echo -e "\n\t\t${CYAN}Enumerating subdomains...${NC}"
+    # Subdomain Enumeration
+    echo -e "\n\t\t${CYAN}Enumerating Subdomains...${NC}"
     subdomains=$(curl -s "https://crt.sh/?q=%25.$domain&output=json" | jq -r '.[].name_value' | sort -u)
     if [ -n "$subdomains" ]; then
-        echo "$subdomains" | sed 's/^/\t\t/'
+        center_text "$subdomains"
         full_output+="\n[+] Subdomains:\n$subdomains\n"
     else
         echo -e "\t\t${RED}No subdomains found or crt.sh unreachable.${NC}"
     fi
 
-    # Nmap
-    echo -e "\n\t\t${YELLOW}Do you want to scan the IP with Nmap? (y/n): ${NC}"
-    echo -ne "\t\t"
-    read -r scan_choice
+    # Nmap Scan
+    echo -e "\n\t\t${CYAN}Choose Nmap scan type:${NC}"
+    animate_lines \
+        "${GREEN}1. Quick scan${NC}" \
+        "${GREEN}2. Full scan${NC}" \
+        "${GREEN}3. OS and version detection${NC}" \
+        "${GREEN}4. Service version detection${NC}" \
+        "${GREEN}5. Custom port scan${NC}" \
+        "${GREEN}6. Run ALL scans${NC}"
 
-    if [[ "$scan_choice" =~ ^[Yy]$ ]]; then
-        echo -e "\t\t${CYAN}Choose Nmap scan type:${NC}"
-        animate_lines \
-            "${GREEN}1. Quick scan${NC}" \
-            "${GREEN}2. Full scan${NC}" \
-            "${GREEN}3. OS and version detection${NC}" \
-            "${GREEN}4. Service version detection${NC}" \
-            "${GREEN}5. Custom port scan${NC}" \
-            "${GREEN}6. Run ALL scans${NC}"
+    echo -ne "\t\t${CYAN}Enter your choice: ${NC}"
+    read -r scan_type
+    scan_result=""
 
-        echo -ne "\t\t${CYAN}Enter your choice: ${NC}"
-        read -r scan_type
-        scan_result=""
+    case "$scan_type" in
+        1) scan_result=$(nmap "$ip_to_scan") ;;
+        2) scan_result=$(nmap -p- "$ip_to_scan") ;;
+        3) scan_result=$(nmap -O "$ip_to_scan") ;;
+        4) scan_result=$(nmap -sV "$ip_to_scan") ;;
+        5)
+            echo -ne "\t\t${CYAN}Enter ports (e.g. 22,80): ${NC}"
+            read -r ports
+            scan_result=$(nmap -p "$ports" "$ip_to_scan")
+            ;;
+        6)
+            scan_result+=$'\n--- Quick Scan ---\n'
+            scan_result+=$(nmap "$ip_to_scan")
+            scan_result+=$'\n--- Full Port Scan ---\n'
+            scan_result+=$(nmap -p- "$ip_to_scan")
+            scan_result+=$'\n--- OS Detection ---\n'
+            scan_result+=$(nmap -O "$ip_to_scan")
+            scan_result+=$'\n--- Service Version Detection ---\n'
+            scan_result+=$(nmap -sV "$ip_to_scan")
+            ;;
+        *) echo -e "\t\t${RED}Invalid scan type.${NC}" ;;
+    esac
 
-        case "$scan_type" in
-            1) scan_result=$(nmap "$ip_to_scan") ;;
-            2) scan_result=$(nmap -p- "$ip_to_scan") ;;
-            3) scan_result=$(nmap -O "$ip_to_scan") ;;
-            4) scan_result=$(nmap -sV "$ip_to_scan") ;;
-            5)
-                echo -ne "\t\t${CYAN}Enter ports (e.g. 22,80): ${NC}"
-                read -r ports
-                scan_result=$(nmap -p "$ports" "$ip_to_scan")
-                ;;
-            6)
-                scan_result+=$'\n--- Quick Scan ---\n'
-                scan_result+=$(nmap "$ip_to_scan")
-                scan_result+=$'\n--- Full Port Scan ---\n'
-                scan_result+=$(nmap -p- "$ip_to_scan")
-                scan_result+=$'\n--- OS Detection ---\n'
-                scan_result+=$(nmap -O "$ip_to_scan")
-                scan_result+=$'\n--- Service Version Detection ---\n'
-                scan_result+=$(nmap -sV "$ip_to_scan")
-                ;;
-            *) echo -e "\t\t${RED}Invalid scan type.${NC}" ;;
-        esac
+    center_text "$scan_result"
+    full_output+="\n[+] Nmap Results:\n$scan_result\n"
 
-        echo "$scan_result" | sed 's/^/\t\t/'
-        full_output+="\n[+] Nmap Results:\n$scan_result\n"
-    fi
-
-    # Save output
-    echo -e "\n\t\t${CYAN}Save all results to a file? (y/n): ${NC}"
-    echo -ne "\t\t"
-    read -r save_choice
-    if [[ "$save_choice" =~ ^[Yy]$ ]]; then
-        safe_domain=$(echo "$domain" | tr -cd '[:alnum:]_')
-        filename="findU_scan_${safe_domain}_$(date +%Y%m%d_%H%M%S).txt"
-        echo -e "$full_output" > "$filename"
-        echo -e "\t\t${GREEN}Results saved to $filename${NC}"
-    fi
+    # Auto Save
+    safe_domain=$(echo "$domain" | tr -cd '[:alnum:]_')
+    filename="findU_scan_${safe_domain}_$(date +%Y%m%d_%H%M%S).txt"
+    echo -e "$full_output" > "$filename"
+    echo -e "\t\t${GREEN}Results saved to $filename${NC}"
 
     echo -e "\n\t\t${CYAN}"
     animate_text "🎉 Thank you for using FindU!"
@@ -223,5 +198,5 @@ run_scan() {
     sleep 2
 }
 
-# Start the tool
+# Start the Tool
 main_menu
